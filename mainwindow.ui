@@ -68,6 +68,11 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Courier New</family>
+     </font>
+    </property>
     <property name="text">
      <string>note mode</string>
     </property>

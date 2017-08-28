@@ -1,10 +1,13 @@
 #ifndef CONST_H
 #define CONST_H
 #include <QString>
-
-const QString btnPushedStyle = "background-color:rgb(80,217,20)";
-const QString btnHighlightSyle = "background-color:rgb(50,79,150)";
-const QString btnHighlightSecondStyle = "background-color:rgb(25,39,75)";
+#include <QFont>
+const QString btnPushedStyle = "background-color:rgb(255,227,132)";
+const QString btnHighlightSyle = "background-color:rgb(135,206,255)";
+const QString btnHighlightSecondStyle = "background-color:rgb(176,224,230)";
 const QString btnNormalStyle = "background-color:rgb(255,255,255)";
+const QFont numberNormalFont = QFont("Courier New", 20, 7);
+const QFont numberNoteFont = QFont("Courier New", 8, 5);
+const QFont numberQustionFont = QFont("Courier", 24, 8, 1);
 
 #endif // CONST_H

@@ -73,6 +73,9 @@ void Logic::process(const Operation &cur, int toShow){
 }
 
 int Logic::pushNumber(int x){
+    for (int i = 1;i <= 9;i++){
+        window -> number[i] -> setStyleSheet(i == x?btnPushedStyle:btnNormalStyle);
+    }
     // TODO
 #ifdef DEBUG
     fprintf(stdout, "pushNumber(%d)\n", x);
@@ -81,6 +84,8 @@ int Logic::pushNumber(int x){
         Operation cur(pre_x, pre_y, x, m_note);
         operations.push_back(cur);
         process(cur);
+        if (!m_note)
+            pre_x = pre_y = -1;
     }
     else{
         for (int i = 0;i < 9;i++)
@@ -97,6 +102,7 @@ int Logic::pushPos(int x, int y){
 #endif
     pre_x = x;
     pre_y = y;
+    updateFrame();
 }
 
 void Logic::clear(){
@@ -133,6 +139,7 @@ void Logic::updateFrame(){
     for (int i = 0;i < 9;i++){
         for (int j = 0;j < 9;j++){
             if (grid[i][j]){
+                window -> grid[i][j] -> setFont(numberNormalFont);
                 window -> grid[i][j] -> setText(QString::number(grid[i][j]));
                 if (grid[i][j] == num)
                     window -> grid[i][j] -> setStyleSheet(btnHighlightSecondStyle);
@@ -141,9 +148,10 @@ void Logic::updateFrame(){
             }else{
                 window -> grid[i][j] -> setStyleSheet(btnNormalStyle);
                 if (notes[i][j].size()){
+                    window -> grid[i][j] -> setFont(numberNoteFont);
                     buffer[0] = 0;
                     for (int k = 0;k < notes[i][j].size();k++){
-                        if (!k) sprintf(buffer + strlen(buffer), ",");
+                        if (k) sprintf(buffer + strlen(buffer), k%3?",":"\n");
                         sprintf(buffer + strlen(buffer), "%d", notes[i][j][k]);
                     }
                     window -> grid[i][j]->setText(buffer);
@@ -161,6 +169,11 @@ void Logic::updateFrame(){
 void Logic::revoke(){
     int last = operations.size();
     operations.erase(operations.begin() + (last - 1));
+    for (int i = 0;i < 9;i++)
+        for (int j = 0;j < 9;j++){
+            notes[i][j].clear();
+            grid[i][j] = used[i][j]?ans[i][j]:0;
+        }
     for (auto t : operations){
         process(t, 0);
     }
