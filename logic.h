@@ -17,13 +17,11 @@ struct Operation{
 class Logic : public QObject{
     Q_OBJECT
     friend class MainWindow;
+    friend class Solver;
 public:
     Logic(MainWindow *window, QObject *parent = 0): window(window), QObject(parent){
         memset(used, 0, sizeof(used));
         memset(ans, 0, sizeof(ans));
-        memset(row, 0, sizeof(row));
-        memset(col, 0, sizeof(col));
-        memset(block, 0, sizeof(block));
         memset(grid, 0, sizeof(grid));
         pre_x = pre_y = -1;
         m_note = 0;
@@ -46,9 +44,6 @@ private:
     int grid[10][10];           // to solve the current state
     int used[10][10];           // whether its for the user to put
     int ans[10][10];
-    int row[10][10];
-    int col[10][10];
-    int block[4][4][10];
     int generate(int step = 0); // to generate a random sudoku with step empitys;
     int selfCheck(); // only one solution;
     int m_note;         // whether cuurently its note mode;

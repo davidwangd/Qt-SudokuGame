@@ -35,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnRevoke, SIGNAL(clicked()), logic, SLOT(revoke()));
     connect(ui->btnNoteMode, SIGNAL(clicked()), logic, SLOT(noteMode()));
     connect(ui->btnClear, SIGNAL(clicked()), logic, SLOT(clear()));
+    connect(ui->actionExit, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(ui->actionEasy, SIGNAL(triggered()), logic, SLOT(generateEasyGame()));
+    connect(ui->actionNormal, SIGNAL(triggered()), logic, SLOT(generateNormalGame()));
+    connect(ui->actionHard, SIGNAL(triggered()), logic, SLOT(generateHardGame()));
 }
 
 void MainWindow::numberPressed(int number){

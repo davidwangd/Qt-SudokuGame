@@ -14,11 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    logic.cpp
+    logic.cpp \
+    solver.cpp
 
 HEADERS  += mainwindow.h \
     logic.h \
     debug.h \
-    const.h
+    const.h \
+    solver.h
 
 FORMS    += mainwindow.ui
