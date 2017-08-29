@@ -85,6 +85,7 @@ int Logic::generate(int steps){
 }
 
 int Logic::check(){
+    updateFrame();
     for (int i = 0;i < SIZE;i++)
         for (int j = 0;j < SIZE;j++){
             if (grid[i][j] != 0 && ans[i][j] != grid[i][j]){
@@ -94,6 +95,7 @@ int Logic::check(){
 }
 
 int Logic::simpleCheck(){
+    updateFrame();
     static int row[10][10], col[10][10], block[4][4][10];
     memset(row, 0, sizeof(row));
     memset(col, 0, sizeof(col));
@@ -117,6 +119,7 @@ int Logic::simpleCheck(){
             if (c && (row[i][c] || col[j][c] || block[i/3][j/3][c])){
                 window -> grid[i][j] -> setStyleSheet(btnWrongStyle);
             }
+            row[i][c] = col[j][c] = block[i/3][j/3][c] = 1;
         }
 }
 
@@ -155,7 +158,7 @@ void Logic::process(const Operation &cur, int toShow){
 }
 
 void Logic::clearNotes(int x, int y){
-
+    int &now = grid[x][y];
     for (int i = 0;i < SIZE;i++){
         for (auto it = notes[x][i].begin(); it != notes[x][i].end();it++){
             if (*it == now){
@@ -165,7 +168,7 @@ void Logic::clearNotes(int x, int y){
         }
         for (auto it = notes[i][y].begin(); it != notes[i][y].end();it++){
             if (*it == now){
-                notes[x][i].erase(it);
+                notes[i][y].erase(it);
                 break;
             }
         }
@@ -175,6 +178,7 @@ void Logic::clearNotes(int x, int y){
             for (auto it = notes[i][j].begin(); it != notes[i][j].end(); it++){
                 if (*it == now){
                     notes[i][j].erase(it);
+                    break;
                 }
             }
         }
@@ -211,8 +215,14 @@ int Logic::pushPos(int x, int y){
 #endif
     pre_x = x;
     pre_y = y;
-    if (grid[pre_x][pre_y]){
-        pushNumber(grid[pre_x][pre_y]);
+    for (int i = 1;i <= SIZE;i++){
+        window -> number[i] -> setStyleSheet(btnNormalStyle);
+    }
+    if (grid[x][y]) window -> number[grid[x][y]] -> setStyleSheet(btnPushedStyle);
+    else{
+        for (int i : notes[x][y]){
+            window -> number[i] -> setStyleSheet(btnPushedStyle);
+        }
     }
     updateFrame();
 }
@@ -250,15 +260,16 @@ void Logic::updateFrame(){
     }
     for (int i = 0;i < 9;i++){
         for (int j = 0;j < 9;j++){
+            QString sheet = QString();
+            if (i == pre_x || j == pre_y){
+                sheet = btnHighlightThirdSytle;
+            }
             if (grid[i][j]){
                 if (!used[i][j]) window -> grid[i][j] -> setFont(numberNormalFont);
                 window -> grid[i][j] -> setText(QString::number(grid[i][j]));
                 if (grid[i][j] == num)
-                    window -> grid[i][j] -> setStyleSheet(btnHighlightSecondStyle);
-                else
-                    window -> grid[i][j] -> setStyleSheet(btnNormalStyle);
+                    sheet = sheet + btnHighlightSecondStyle;
             }else{
-                window -> grid[i][j] -> setStyleSheet(btnNormalStyle);
                 if (notes[i][j].size()){
                     window -> grid[i][j] -> setFont(numberNoteFont);
                     buffer[0] = 0;
@@ -271,10 +282,20 @@ void Logic::updateFrame(){
                     window -> grid[i][j] -> setText("");
                 }
             }
+            window -> grid[i][j] -> setStyleSheet(sheet);
         }
     }
-    if (pre_x != -1 && pre_y != -1)
+    for (int i = 1;i <= SIZE;i++)
+        window -> number[i] -> setStyleSheet(btnNormalStyle);
+    if (pre_x != -1 && pre_y != -1){
         window -> grid[pre_x][pre_y] -> setStyleSheet(btnHighlightSyle);
+        if (grid[pre_x][pre_y]) window -> number[grid[pre_x][pre_y]] -> setStyleSheet(btnPushedStyle);
+        else{
+            for (int i : notes[pre_x][pre_y]){
+                window -> number[i] -> setStyleSheet(btnPushedStyle);
+            }
+        }
+    }
 }
 
 // revoke the last operation
@@ -293,6 +314,16 @@ void Logic::revoke(){
         process(t, 0);
     }
     updateFrame();
+}
+
+void Logic::hint(){
+    if (pre_x != -1 && pre_y != -1){
+        used[pre_x][pre_y] = 1;
+        grid[pre_x][pre_y] = ans[pre_x][pre_y];
+        window -> grid[pre_x][pre_y] -> setFont(numberQustionFont);
+        clearNotes(pre_x, pre_y);
+        updateFrame();
+    }
 }
 
 int Logic::selfCheck(){

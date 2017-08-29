@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionHard, SIGNAL(triggered()), logic, SLOT(generateHardGame()));
     connect(ui->actionCheck, SIGNAL(triggered()), logic, SLOT(check()));
     connect(ui->actionSimpleCheck, SIGNAL(triggered()), logic, SLOT(simpleCheck()));
+    connect(ui->actionHard, SIGNAL(triggered()), logic, SLOT(hint()));
 }
 
 void MainWindow::numberPressed(int number){

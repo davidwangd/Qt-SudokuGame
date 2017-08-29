@@ -39,6 +39,7 @@ public slots:
     void recover();
     void newSolver();
     void solve();
+    void hint();
 private:
     void clearNotes(int x, int y);
     void process(const Operation &x, int toShow = 1);
