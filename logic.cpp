@@ -85,11 +85,39 @@ int Logic::generate(int steps){
 }
 
 int Logic::check(){
-    // TODO
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++){
+            if (grid[i][j] != 0 && ans[i][j] != grid[i][j]){
+                window -> grid[i][j] -> setStyleSheet(btnWrongStyle);
+            }
+        }
 }
 
 int Logic::simpleCheck(){
-    // TODO
+    static int row[10][10], col[10][10], block[4][4][10];
+    memset(row, 0, sizeof(row));
+    memset(col, 0, sizeof(col));
+    memset(block, 0, sizeof(block));
+
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++){
+            int &c = grid[i][j];
+            if (c && (row[i][c] || col[j][c] || block[i/3][j/3][c])){
+                window -> grid[i][j] -> setStyleSheet(btnWrongStyle);
+            }
+            row[i][c] = col[j][c] = block[i/3][j/3][c] = 1;
+        }
+    memset(row, 0, sizeof(row));
+    memset(col, 0, sizeof(col));
+    memset(block, 0, sizeof(block));
+
+    for (int i = SIZE - 1;i >= 0;i--)
+        for (int j = SIZE - 1;j >= 0;j--){
+            int &c = grid[i][j];
+            if (c && (row[i][c] || col[j][c] || block[i/3][j/3][c])){
+                window -> grid[i][j] -> setStyleSheet(btnWrongStyle);
+            }
+        }
 }
 
 void Logic::process(const Operation &cur, int toShow){
@@ -118,34 +146,38 @@ void Logic::process(const Operation &cur, int toShow){
         if (grid[x][y] != now){
             grid[x][y] = now;
             notes[x][y].clear();
-
-            for (int i = 0;i < SIZE;i++){
-                for (auto it = notes[x][i].begin(); it != notes[x][i].end();it++){
-                    if (*it == now){
-                        notes[x][i].erase(it);
-                        break;
-                    }
-                }
-                for (auto it = notes[i][y].begin(); it != notes[i][y].end();it++){
-                    if (*it == now){
-                        notes[x][i].erase(it);
-                        break;
-                    }
-                }
-            }
-            for (int i = (x/3)*3; i < (x/3+1)*3;i++){
-                for (int j = (y/3)*3; j < (y/3+1)*3;j++){
-                    for (auto it = notes[i][j].begin(); it != notes[i][j].end(); it++){
-                        if (*it == now){
-                            notes[i][j].erase(it);
-                        }
-                    }
-                }
-            }
+            clearNotes(x, y);
         }
     }
     if (toShow){
         updateFrame();
+    }
+}
+
+void Logic::clearNotes(int x, int y){
+
+    for (int i = 0;i < SIZE;i++){
+        for (auto it = notes[x][i].begin(); it != notes[x][i].end();it++){
+            if (*it == now){
+                notes[x][i].erase(it);
+                break;
+            }
+        }
+        for (auto it = notes[i][y].begin(); it != notes[i][y].end();it++){
+            if (*it == now){
+                notes[x][i].erase(it);
+                break;
+            }
+        }
+    }
+    for (int i = (x/3)*3; i < (x/3+1)*3;i++){
+        for (int j = (y/3)*3; j < (y/3+1)*3;j++){
+            for (auto it = notes[i][j].begin(); it != notes[i][j].end(); it++){
+                if (*it == now){
+                    notes[i][j].erase(it);
+                }
+            }
+        }
     }
 }
 
@@ -267,4 +299,20 @@ int Logic::selfCheck(){
     // TODO
     // Totally TODO Matter.
     return 1;
+}
+
+void Logic::pause(){
+
+}
+
+void Logic::newSolver(){
+
+}
+
+void Logic::solve(){
+
+}
+
+void Logic::recover(){
+
 }

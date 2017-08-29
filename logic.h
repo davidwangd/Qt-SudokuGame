@@ -35,7 +35,12 @@ public slots:
     int check();
     int simpleCheck();
     void clear();
+    void pause();
+    void recover();
+    void newSolver();
+    void solve();
 private:
+    void clearNotes(int x, int y);
     void process(const Operation &x, int toShow = 1);
     int pushNumber(int);
     void updateFrame();
@@ -50,6 +55,7 @@ private:
     MainWindow *window;
     int pre_x, pre_y;
     std::vector<Operation> operations;
+    std::vector<Operation> revoked;
 };
 
 #endif // LOGIC_H

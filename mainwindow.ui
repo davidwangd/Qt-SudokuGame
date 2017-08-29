@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>694</width>
-    <height>671</height>
+    <height>764</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
       <x>570</x>
       <y>20</y>
       <width>101</width>
-      <height>581</height>
+      <height>651</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -51,18 +51,18 @@
      <rect>
       <x>50</x>
       <y>570</y>
-      <width>161</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Revoke</string>
+     <string>undo</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btnNoteMode">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>310</x>
       <y>570</y>
       <width>131</width>
       <height>31</height>
@@ -80,7 +80,7 @@
    <widget class="QPushButton" name="btnClear">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>450</x>
       <y>570</y>
       <width>101</width>
       <height>31</height>
@@ -88,6 +88,58 @@
     </property>
     <property name="text">
      <string>clear</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRecover">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>570</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>redo</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>630</y>
+      <width>93</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>pause</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdMin">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>620</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="digitCount">
+     <number>3</number>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdSec">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>620</y>
+      <width>61</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="digitCount">
+     <number>2</number>
     </property>
    </widget>
   </widget>
