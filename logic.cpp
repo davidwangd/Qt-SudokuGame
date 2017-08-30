@@ -357,6 +357,7 @@ void Logic::updateFrame(){
             }
             if (grid[i][j]){
                 if (!used[i][j]) window -> grid[i][j] -> setFont(numberNormalFont);
+                else sheet = sheet + btnQustionStyle;
                 window -> grid[i][j] -> setText(QString::number(grid[i][j]));
                 if (grid[i][j] == num)
                     sheet = sheet + btnHighlightSecondStyle;

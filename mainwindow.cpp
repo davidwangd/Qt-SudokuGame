@@ -107,6 +107,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     if ('0' <= x && x <= '9'){
         logic -> pushNumber(x - '0');
     }
+    if (x == Qt::Key_Escape){
+        qApp -> quit();
+    }
     return QMainWindow::keyPressEvent(event);
 }
 
