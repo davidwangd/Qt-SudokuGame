@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <QDialog>
 #include <QErrorMessage>
-#include <QMessageBox>
 #ifdef DEBUG_GEN
     #define DEBUG_GEN_FIND \
         printf("!!\n");    \
@@ -115,22 +114,22 @@ void Logic::processFile(FILE *file, int time){
         for (int i = 0;i < SIZE;i++)
             for (int j = 0;j < SIZE;j++){
                 fscanf(file, "%c", &c);
-                while (c == ' ' || c == '\t' || c == '\n') fscanf(file, "%c", &c);
+                qDebug("%c", c);
                 if (c >= 'a'){
                     used[i][j] = 1;
                     window -> grid[i][j] -> setFont(numberQustionFont);
-                    grid[i][j] = ans[i][j] = c - 'a';
+                    ans[i][j] = c - 'a';
                 }else{
                     ans[i][j] = c - '0';
                 }
             }
         int x, y, n, d;
         while(fscanf(file, "%1d%1d%1d%1d", &x, &y, &n, &d) == 4){
+            qDebug("%d,%d,%d,%d", x, y, n, d);
             Operation cur(x, y, n, d);
             operations.push_back(cur);
             process(cur, 0);
         }
-        timer -> start(1000);
         updateFrame();
         fclose(file);
     }
@@ -370,12 +369,6 @@ void Logic::updateFrame(){
             }
         }
     }
-    for (int i = 0;i < SIZE;i++)
-        for (int j = 0;j < SIZE;j++)
-            if (grid[i][j] != ans[i][j]) return;
-    setBoardAvailable(false);
-    QMessageBox cur;
-    cur.setText("Congratulations, You've solved This Game in " + QString::number(timeUsed / 60) + ":" + QString::number(timeUsed % 60));
 }
 
 // revoke the last operation

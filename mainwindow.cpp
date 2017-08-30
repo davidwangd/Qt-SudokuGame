@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <cstdio>
 #include <QSignalMapper>
+#include <QMessageBox>
 #include "logic.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -74,6 +75,14 @@ void MainWindow::numberPressed(int number){
         int y = number % 9;
         logic -> pushPos(x, y);
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    logic -> saveToFile();
+    QMessageBox cur;
+    cur.setText("Exit Program. Saved Process!");
+    cur.exec();
 }
 
 MainWindow::~MainWindow()
