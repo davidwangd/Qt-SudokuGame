@@ -4,6 +4,7 @@
 #include <QSignalMapper>
 #include <QMessageBox>
 #include "logic.h"
+#include <QKeyEvent>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -17,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
         number[i] = new QPushButton(buffer, ui->buttonFrame);
         number[i]->setGeometry(padding, padding * (i) + size * (i-1), size, size);
         number[i]->show();
+        number[i]->installEventFilter(this);
         connect(number[i], SIGNAL(clicked()), mapper, SLOT(map()));
         mapper->setMapping(number[i], i);
     }
@@ -28,10 +30,20 @@ MainWindow::MainWindow(QWidget *parent) :
             grid[i][j] = new QPushButton(ui->mainFrame);
             grid[i][j]->setGeometry(padding * (j/3+1) + size * j, padding*(i/3+1) + size * i, size, size);
             grid[i][j]->show();
+            grid[i][j]->installEventFilter(this);
             connect(grid[i][j], SIGNAL(clicked()), mapper, SLOT(map()));
             mapper->setMapping(grid[i][j], 10+i*9+j);
         }
     }
+
+    for (int i = 1;i <= 10;i++){
+        actionLevel[i] = new QAction(ui->menuLevelGame);
+        ui->menuLevelGame->addAction(actionLevel[i]);
+        actionLevel[i]->setText("Level" + QString::number(i));
+        connect(actionLevel[i], SIGNAL(triggered()), mapper, SLOT(map()));
+        mapper -> setMapping(actionLevel[i], -i);
+    }
+
     connect(mapper, SIGNAL(mapped(int)), this, SLOT(numberPressed(int)));
     connect(ui->btnRevoke, SIGNAL(clicked()), logic, SLOT(revoke()));
     connect(ui->btnNoteMode, SIGNAL(clicked()), logic, SLOT(noteMode()));
@@ -68,6 +80,9 @@ void MainWindow::numberPressed(int number){
 #ifdef DEBUG
     printf("numberPressed(%d)\n", number);
 #endif
+    if (number < 0){
+        logic -> loadLevel(-number);
+    }
     if (number < 10) logic -> pushNumber(number);
     else{
         number -= 10;
@@ -80,12 +95,38 @@ void MainWindow::numberPressed(int number){
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     logic -> saveToFile();
-    QMessageBox cur;
-    cur.setText("Exit Program. Saved Process!");
-    cur.exec();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event){
+    int x = event -> key();
+    if ('0' <= x && x <= '9'){
+        logic -> pushNumber(x - '0');
+    }
+    return QMainWindow::keyPressEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *eve){
+    if (eve -> type() == QEvent::KeyPress){
+        QKeyEvent* event = (QKeyEvent *)eve;
+        if (event -> key() == Qt::Key_Left){
+            logic -> pushPos((logic -> pre_x), (logic -> pre_y - 1 + SIZE)%SIZE);
+            return true;
+        }else if (event -> key() == Qt::Key_Right){
+            logic -> pushPos((logic -> pre_x), (logic -> pre_y + 1)%SIZE);
+            return true;
+        }else if (event -> key() == Qt::Key_Up){
+            logic -> pushPos((logic -> pre_x + SIZE - 1) % SIZE, (logic -> pre_y));
+            return true;
+        }else if (event -> key() == Qt::Key_Down){
+            logic -> pushPos((logic -> pre_x + 1) % SIZE, (logic -> pre_y));
+            return true;
+        }
+        return false;
+    }
+    return false;
 }

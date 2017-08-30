@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include <QSignalMapper>
 #include "const.h"
-
+#include <QAction>
 namespace Ui {
 class MainWindow;
 }
@@ -18,12 +18,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
 public slots:
     void numberPressed(int);
 private:
     QPushButton *number[10];
     QPushButton *grid[10][10];
     QPushButton *test;
+    QAction *actionLevel[15];
     enum{
         size = 55,
         padding = 10

@@ -29,10 +29,28 @@ void Logic::timeChange(){
     timeUsed += 1;
     window -> ui -> lcdMin->display(timeUsed / 60);
     window -> ui -> lcdSec->display(timeUsed % 60);
+    if (timeUsed % 10 == 0)
+        saveToFile();
 }
 
 void Logic::generateEasyGame(){
     generate(35);
+}
+
+void Logic::loadLevel(int level){
+    char buffer[100];
+    sprintf(buffer, "Level\\level%d.game", level);
+    FILE *f = fopen(buffer, "r");
+    if (f == NULL){
+        QErrorMessage Q(window);
+        Q.showMessage("No " + QString(buffer) + " File Found");
+        Q.show();
+        Q.exec();
+        return;
+    }
+    else{
+        processFile(f, 0);
+    }
 }
 
 void Logic::generateNormalGame(){
@@ -271,8 +289,6 @@ int Logic::pushNumber(int x){
         Operation cur(pre_x, pre_y, x, m_note);
         operations.push_back(cur);
         process(cur);
-        if (!m_note)
-            pre_x = pre_y = -1;
     }
     else{
         for (int i = 0;i < 9;i++)
@@ -287,6 +303,7 @@ int Logic::pushPos(int x, int y){
 #ifdef DEBUG
     fprintf(stdout, "pushPos(%d, %d)\n", x, y);
 #endif
+    if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return 0;
     pre_x = x;
     pre_y = y;
     for (int i = 1;i <= SIZE;i++){
@@ -372,10 +389,15 @@ void Logic::updateFrame(){
     }
     for (int i = 0;i < SIZE;i++)
         for (int j = 0;j < SIZE;j++)
-            if (grid[i][j] != ans[i][j]) return;
+            if (grid[i][j] != ans[i][j] || grid[i][j] == 0) return;
     setBoardAvailable(false);
+    timer -> stop();
     QMessageBox cur;
-    cur.setText("Congratulations, You've solved This Game in " + QString::number(timeUsed / 60) + ":" + QString::number(timeUsed % 60));
+    if (timeUsed > 0){
+        cur.setText("Congratulations, You've solved This Game in " + QString::number(timeUsed / 60) + ":" + QString::number(timeUsed % 60));
+        cur.show();
+        cur.exec();
+    }
 }
 
 // revoke the last operation
@@ -406,6 +428,9 @@ void Logic::restart(){
             paused = 0;
             timer -> start(1000);
         }
+    operations.clear();
+    revoked.clear();
+    updateFrame();
 }
 
 void Logic::hint(){

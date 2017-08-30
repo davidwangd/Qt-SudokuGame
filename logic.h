@@ -32,6 +32,7 @@ public:
     ~Logic();
     void processFile(FILE *file, int time);
     void saveToFile();
+    void loadLevel(int level);
 public slots:
     void generateEasyGame();
     void generateNormalGame();
