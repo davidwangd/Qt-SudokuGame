@@ -21,6 +21,6 @@ HEADERS  += mainwindow.h \
     logic.h \
     debug.h \
     const.h \
-    solver.h
+	solver.h
 
 FORMS    += mainwindow.ui

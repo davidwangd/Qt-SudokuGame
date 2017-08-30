@@ -3,6 +3,7 @@
 #include "debug.h"
 #include <QObject>
 #include <vector>
+#include <QTimer>
 #include "const.h"
 
 class MainWindow;
@@ -25,7 +26,11 @@ public:
         memset(grid, 0, sizeof(grid));
         pre_x = pre_y = -1;
         m_note = 0;
+        timer = new QTimer();
+        QObject::connect(timer, SIGNAL(timeout()), this, SLOT(timeChange()));
     }
+    ~Logic();
+    void processFile(FILE *file, int time);
 public slots:
     void generateEasyGame();
     void generateNormalGame();
@@ -38,8 +43,13 @@ public slots:
     void pause();
     void recover();
     void newSolver();
-    void solve();
+    void solveByComputer();
+    void solveByPeople();
     void hint();
+    void timeChange();
+    void restart();
+    void showAnswer();
+    void setBoardAvailable(int flag);
 private:
     void clearNotes(int x, int y);
     void process(const Operation &x, int toShow = 1);
@@ -57,6 +67,9 @@ private:
     int pre_x, pre_y;
     std::vector<Operation> operations;
     std::vector<Operation> revoked;
+    int paused;
+    int timeUsed;
+    QTimer* timer;
 };
 
 #endif // LOGIC_H

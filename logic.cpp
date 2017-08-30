@@ -7,7 +7,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-
+#include <QDialog>
+#include <QErrorMessage>
 #ifdef DEBUG_GEN
     #define DEBUG_GEN_FIND \
         printf("!!\n");    \
@@ -17,6 +18,17 @@
 #endif
 
 using namespace std;
+
+Logic::~Logic()
+{
+    delete timer;
+}
+
+void Logic::timeChange(){
+    timeUsed += 1;
+    window -> ui -> lcdMin->display(timeUsed / 60);
+    window -> ui -> lcdSec->display(timeUsed % 60);
+}
 
 void Logic::generateEasyGame(){
     generate(35);
@@ -81,7 +93,15 @@ int Logic::generate(int steps){
         for (int j = 0;j < SIZE;j++)
             printf("%d%c", grid[i][j], j==SIZE-1?'\n':' ');
     updateFrame();
+    timeUsed = 0;
+    paused = 0;
+    timer -> start(1000);
+    setBoardAvailable(true);
     return 0;
+}
+
+void Logic::processFile(FILE *file, int time){
+    // TODO
 }
 
 int Logic::check(){
@@ -123,6 +143,14 @@ int Logic::simpleCheck(){
         }
 }
 
+void Logic::setBoardAvailable(int flag){
+    for (int i = 0; i < SIZE;i++){
+        for (int j = 0;j < SIZE;j++){
+            window -> grid[i][j] ->setEnabled(flag);
+        }
+    }
+}
+
 void Logic::process(const Operation &cur, int toShow){
     int x = cur.x;
     int y = cur.y;
@@ -154,6 +182,7 @@ void Logic::process(const Operation &cur, int toShow){
     }
     if (toShow){
         updateFrame();
+        revoked.clear();
     }
 }
 
@@ -302,6 +331,7 @@ void Logic::updateFrame(){
 void Logic::revoke(){
     int last = operations.size();
     if (last == 0) return;
+    revoked.push_back(operations[operations.size() - 1]);
     operations.erase(operations.begin() + (last - 1));
     for (int i = 0;i < 9;i++)
         for (int j = 0;j < 9;j++){
@@ -314,6 +344,17 @@ void Logic::revoke(){
         process(t, 0);
     }
     updateFrame();
+}
+
+void Logic::restart(){
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++){
+            grid[i][j] = used[i][j]?ans[i][j]:0;
+            notes[i][j].clear();
+            timeUsed = 0;
+            paused = 0;
+            timer -> start(1000);
+        }
 }
 
 void Logic::hint(){
@@ -333,17 +374,91 @@ int Logic::selfCheck(){
 }
 
 void Logic::pause(){
-
+    if (!paused){
+        paused = 1;
+        timer -> stop();
+        for (int i = 0;i < SIZE;i++)
+            for (int j = 0;j < SIZE;j++)
+                window -> grid[i][j] -> setText("");
+        setBoardAvailable(false);
+        pre_x = pre_y = -1;
+    }else{
+        timer -> start(1000);
+        setBoardAvailable(true);
+        updateFrame();
+    }
 }
 
 void Logic::newSolver(){
-
+    memset(ans, 0, sizeof(ans));
+    memset(grid, 0, sizeof(grid));
+    timer -> stop();
+    timeUsed = 0;
+    paused = 0;
+    timeChange();
+    updateFrame();
+    setBoardAvailable(true);
 }
 
-void Logic::solve(){
+void Logic::showAnswer(){
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++)
+            grid[i][j] = ans[i][j];
+    updateFrame();
+    setBoardAvailable(false);
+}
 
+void Logic::solveByComputer(){
+    solveByPeople();
+    showAnswer();
+}
+
+void Logic::solveByPeople(){
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++){
+            ans[i][j] = grid[i][j];
+            used[i][j] = grid[i][j]?1:0;
+        }
+    Solver solver(this);
+    if (!solver.check()){
+        QErrorMessage error(window);
+        error.showMessage("There is no solution in this game!");
+        error.show();
+        error.exec();
+        memset(used, 0, sizeof(used));
+        return;
+    }
+    for (int i = 0;i < SIZE;i++)
+        for (int j = 0;j < SIZE;j++)
+            ans[i][j] = solver.board[i][j];
+    if (solver.check()){
+        QErrorMessage error(window);
+        error.showMessage("There are muliple solutions in this game!");
+        error.show();
+        error.exec();
+        memset(used, 0, sizeof(used));
+        return;
+    }else{
+        for (int i = 0;i < SIZE;i++)
+            for (int j = 0;j < SIZE;j++){
+                if (used[i][j]){
+                    window -> grid[i][j] -> setFont(numberQustionFont);
+                    grid[i][j] = ans[i][j];
+                }else{
+                    grid[i][j] = 0;
+                }
+            }
+        operations.clear();
+        window -> ui -> btnNoteMode -> setEnabled(true);
+        updateFrame();
+    }
 }
 
 void Logic::recover(){
-
+    if (revoked.size() == 0) return;
+    Operation cur = revoked[revoked.size() - 1];
+    revoked.erase(revoked.begin() + (revoked.size() - 1));
+    operations.push_back(cur);
+    process(cur, 0);
+    updateFrame();
 }

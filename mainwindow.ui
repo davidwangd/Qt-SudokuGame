@@ -51,7 +51,7 @@
      <rect>
       <x>50</x>
       <y>570</y>
-      <width>101</width>
+      <width>81</width>
       <height>31</height>
      </rect>
     </property>
@@ -93,9 +93,9 @@
    <widget class="QPushButton" name="btnRecover">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>150</x>
       <y>570</y>
-      <width>101</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -103,7 +103,7 @@
      <string>redo</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="btnPause">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -149,7 +149,7 @@
      <x>0</x>
      <y>0</y>
      <width>694</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -160,7 +160,9 @@
     <addaction name="actionNormal"/>
     <addaction name="actionHard"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="actionRestart"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuCheating">
     <property name="title">
@@ -172,8 +174,18 @@
     <addaction name="separator"/>
     <addaction name="actionShow_Answer"/>
    </widget>
+   <widget class="QMenu" name="menuSolver">
+    <property name="title">
+     <string>Solver</string>
+    </property>
+    <addaction name="actionNewSolver"/>
+    <addaction name="separator"/>
+    <addaction name="actionSolveByComputer"/>
+    <addaction name="actionSolveByPeople"/>
+   </widget>
    <addaction name="menuGame"/>
    <addaction name="menuCheating"/>
+   <addaction name="menuSolver"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -222,6 +234,31 @@
   <action name="actionShow_Answer">
    <property name="text">
     <string>Show Answer</string>
+   </property>
+  </action>
+  <action name="actionNewSolver">
+   <property name="text">
+    <string>New Solver</string>
+   </property>
+  </action>
+  <action name="actionSolveByComputer">
+   <property name="text">
+    <string>Solve By Computer</string>
+   </property>
+  </action>
+  <action name="actionSolveByPeople">
+   <property name="text">
+    <string>Solve By People</string>
+   </property>
+  </action>
+  <action name="actionRestart">
+   <property name="text">
+    <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

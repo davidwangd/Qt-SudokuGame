@@ -14,17 +14,21 @@ int Solver::check(){
     for (int i = 0;i < SIZE;i++){
         for (int j = 0;j < SIZE;j++){
             if (logic -> used[i][j]){
-                board[i][j] = logic -> ans[i][j];
-                row[i][board[i][j]] = 1;
-                col[j][board[i][j]] = 1;
-                block[i/3][j/3][board[i][j]] = 1;
+                int f = logic -> ans[i][j];
+                board[i][j] = f;
+                if (row[i][f] || col[j][f] || block[i/3][j/3][f]) return 0;
+                row[i][f] = 1;
+                col[j][f] = 1;
+                block[i/3][j/3][f] = 1;
             }else{
                 board[i][j] = 0;
             }
         }
     }
     num = 0;
-    return dfs(0, 0);
+    int ret = dfs(0, 0);
+
+    return ret;
 }
 
 
@@ -49,9 +53,5 @@ int Solver::dfs(int x, int y, int flag){
 }
 
 void Solver::show(){
-#ifdef DEBUG_SOLVER
-    for (int i = 0;i < SIZE;i++)
-        for (int j = 0;j < SIZE;j++)
-            printf("%d%c", board[i][j], j == SIZE - 1 ? '\n':' ');
-#endif
+
 }
