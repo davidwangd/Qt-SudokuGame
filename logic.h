@@ -12,6 +12,7 @@ struct Operation{
     int x, y, num, flag;
     Operation(){}
     Operation(int x, int y, int num, int flag): x(x), y(y), num(num), flag(flag){
+    	
     }
 };
 

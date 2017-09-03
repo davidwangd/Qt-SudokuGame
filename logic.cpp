@@ -464,12 +464,15 @@ void Logic::pause(){
         timer -> start(1000);
         setBoardAvailable(true);
         updateFrame();
+        paused = 0;
     }
 }
 
 void Logic::newSolver(){
     memset(ans, 0, sizeof(ans));
     memset(grid, 0, sizeof(grid));
+    memset(used, 0, sizeof(used));
+    pre_x = pre_y = -1;
     timer -> stop();
     timeUsed = 0;
     paused = 0;
